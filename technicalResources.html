@@ -1,0 +1,358 @@
+<!-- To be copied and pasted into a Code Module in Divi for WordPress -->
+<style>
+    .nrt-wrap {
+        --primary: #0056b3;
+        --active: #007cba;
+        --success: #28a745;
+        --bg: #f8f9fa;
+        --white: #fff;
+        --text: #333;
+        --shadow: 0 4px 12px rgba(0, 86, 179, 0.15);
+        max-width: 800px;
+        margin: 20px auto;
+        background: var(--white);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+    }
+
+    .nrt-tabs-header {
+        display: flex;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--active) 100%);
+    }
+
+    .nrt-tab-btn {
+        flex: 1;
+        padding: 18px 20px;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: bold;
+        font-size: 15px;
+        cursor: pointer;
+        border: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        background: transparent;
+        transition: all 0.3s;
+    }
+
+    .nrt-tab-btn:last-child {
+        border-right: none;
+    }
+
+    .nrt-tab-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+
+    .nrt-tab-btn.nrt-active {
+        background: var(--success);
+        color: #fff;
+    }
+
+    .nrt-tab-content {
+        display: none;
+        padding: 30px;
+        background: var(--bg);
+        min-height: 450px;
+    }
+
+    .nrt-tab-content.nrt-active {
+        display: block;
+    }
+
+    .nrt-tool-title {
+        color: var(--primary);
+        font-size: 24px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .nrt-calc-group {
+        margin-bottom: 16px;
+        background: var(--white);
+        padding: 15px;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .nrt-wrap label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: bold;
+        color: var(--text);
+    }
+
+    .nrt-wrap input,
+    .nrt-wrap select {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+
+    .nrt-wrap input:focus,
+    .nrt-wrap select:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: 0 0 5px rgba(0, 86, 179, 0.3);
+    }
+
+    .nrt-btn {
+        background: linear-gradient(135deg, var(--active) 0%, var(--primary) 100%);
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 16px;
+        font-weight: bold;
+        transition: all 0.3s;
+        margin: 5px 0;
+    }
+
+    .nrt-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 86, 179, 0.4);
+    }
+
+    .nrt-preset {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 15px 0;
+    }
+
+    .nrt-preset .nrt-btn {
+        width: auto;
+        padding: 8px 16px;
+        background: var(--success);
+        margin: 0;
+    }
+
+    .nrt-preset .nrt-btn:hover {
+        background: #218838;
+        transform: none;
+    }
+
+    .nrt-result {
+        display: none;
+        margin-top: 20px;
+        padding: 20px;
+        background: var(--white);
+        border: 3px solid var(--success);
+        border-radius: 10px;
+        font-size: 18px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.25);
+    }
+
+    .nrt-result strong {
+        color: var(--primary);
+        font-size: 26px;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .nrt-note {
+        color: #666;
+        font-size: 13px;
+        display: block;
+        margin-top: 10px;
+        line-height: 1.4;
+    }
+
+    .nrt-note a {
+        color: var(--active);
+        text-decoration: none;
+    }
+
+    .nrt-note a:hover {
+        text-decoration: underline;
+    }
+
+    .nrt-error {
+        color: #dc3545 !important;
+    }
+
+    @media (max-width: 600px) {
+        .nrt-tabs-header {
+            flex-direction: column;
+        }
+
+        .nrt-tab-btn {
+            border-right: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    }
+</style>
+
+<div class="nrt-wrap">
+    <div class="nrt-tabs-header">
+        <button class="nrt-tab-btn nrt-active" onclick="nrtShowTab('nrt-viscosity')">Viscosity Blending</button>
+        <button class="nrt-tab-btn" onclick="nrtShowTab('nrt-treat')">Treat Rate Estimator</button>
+        <button class="nrt-tab-btn" onclick="nrtShowTab('nrt-performance')">Performance Predictor</button>
+        <button class="nrt-tab-btn" onclick="nrtShowTab('nrt-roi')">ROI Simulator</button>
+    </div>
+
+    <!-- VISCOSITY TAB -->
+    <div id="nrt-viscosity" class="nrt-tab-content nrt-active">
+        <h3 class="nrt-tool-title">NRTech Viscosity Blending Calculator</h3>
+        <p style="text-align:center;color:#555;margin-bottom:20px;">Blend base oils + VII for precise KV100 @ 100°C.</p>
+        <div class="nrt-calc-group">
+            <label>Oil 1 KV100 (cSt): <input type="number" id="nrt-v1" value="4" step="0.1" min="1"></label>
+            <label>Oil 1 %: <input type="number" id="nrt-p1" value="50" step="1" min="0" max="100"></label>
+        </div>
+        <div class="nrt-calc-group">
+            <label>Oil 2 KV100 (cSt): <input type="number" id="nrt-v2" value="6" step="0.1" min="1"></label>
+            <label>Oil 2 %: <input type="number" id="nrt-p2" value="50" step="1" min="0" max="100"></label>
+        </div>
+        <div class="nrt-calc-group">
+            <label>Oil 3 / VII KV100 (cSt): <input type="number" id="nrt-v3" value="1500" step="1" min="1"></label>
+            <label>Oil 3 %: <input type="number" id="nrt-p3" value="0" step="0.1" min="0" max="100"></label>
+        </div>
+        <div class="nrt-preset">
+            <button class="nrt-btn" type="button" onclick="nrtViscPreset('gear')">Gear Oil</button>
+            <button class="nrt-btn" type="button" onclick="nrtViscPreset('vii')">+0.5% VII</button>
+            <button class="nrt-btn" type="button" onclick="nrtViscPreset('clear')">Clear</button>
+        </div>
+        <button class="nrt-btn" type="button" onclick="nrtCalcVisc()">Calculate Blend</button>
+        <div id="nrt-visc-result" class="nrt-result"></div>
+    </div>
+
+    <!-- TREAT RATE TAB -->
+    <div id="nrt-treat" class="nrt-tab-content">
+        <h3 class="nrt-tool-title">Treat Rate &amp; Cost Estimator</h3>
+        <p style="color:#555;margin-bottom:20px;">Outputs mass/cost for NRTech additives (density 0.85 kg/L).</p>
+        <div class="nrt-calc-group" style="max-width:500px;">
+            <label>Blend Volume (L): <input type="number" id="nrt-volume" value="1000" min="1"></label>
+            <label>Select Additive:
+                <select id="nrt-additive">
+                    <option value="pma">PMA VII Gear (0.5%, $15/kg)</option>
+                    <option value="ep">EP Gear Oil (1.0%, $20/kg)</option>
+                    <option value="atf">ATF Package (0.8%, $18/kg)</option>
+                </select>
+            </label>
+            <button class="nrt-btn" type="button" onclick="nrtCalcTreat()">Calculate</button>
+            <div id="nrt-treat-result" class="nrt-result"></div>
+        </div>
+    </div>
+
+    <!-- PERFORMANCE TAB -->
+    <div id="nrt-performance" class="nrt-tab-content">
+        <h3 class="nrt-tool-title">Performance Predictor</h3>
+        <p style="color:#555;">Predict FZG/ASTM performance for additives. <em>Expand with sliders soon.</em></p>
+    </div>
+
+    <!-- ROI TAB -->
+    <div id="nrt-roi" class="nrt-tab-content">
+        <h3 class="nrt-tool-title">ROI Simulator</h3>
+        <p style="color:#555;">U.S. supply resilience ROI calculator. <em>Sliders coming soon.</em></p>
+    </div>
+</div>
+
+<script>
+    (function () {
+        // Tab switching
+        function nrtShowTab(id) {
+            document.querySelectorAll('.nrt-tab-content').forEach(function (el) {
+                el.classList.remove('nrt-active');
+            });
+            document.querySelectorAll('.nrt-tab-btn').forEach(function (el) {
+                el.classList.remove('nrt-active');
+            });
+            document.getElementById(id).classList.add('nrt-active');
+            var idx = ['nrt-viscosity', 'nrt-treat', 'nrt-performance', 'nrt-roi'].indexOf(id);
+            document.querySelectorAll('.nrt-tab-btn')[idx].classList.add('nrt-active');
+        }
+        window.nrtShowTab = nrtShowTab;
+
+        // Viscosity blending (logarithmic blending rule)
+        function nrtLogBlend(v1, p1, v2, p2, v3, p3) {
+            var total = p1 + p2 + p3;
+            if (Math.abs(total - 100) > 0.1) return { error: 'Percentages must sum to 100%' };
+            var lp1 = (p1 / 100) * Math.log(v1);
+            var lp2 = (p2 / 100) * Math.log(v2);
+            var lp3 = p3 > 0 ? (p3 / 100) * Math.log(v3) : 0;
+            return Math.exp(lp1 + lp2 + lp3);
+        }
+
+        // Refutas VI approximation
+        function nrtVI(v) {
+            return 14.534 * Math.log(Math.log(v + 0.8)) + 10.975;
+        }
+
+        function nrtCalcVisc() {
+            var v1 = parseFloat(document.getElementById('nrt-v1').value);
+            var p1 = parseFloat(document.getElementById('nrt-p1').value);
+            var v2 = parseFloat(document.getElementById('nrt-v2').value);
+            var p2 = parseFloat(document.getElementById('nrt-p2').value);
+            var v3 = parseFloat(document.getElementById('nrt-v3').value);
+            var p3 = parseFloat(document.getElementById('nrt-p3').value);
+            var result = document.getElementById('nrt-visc-result');
+            var blend = nrtLogBlend(v1, p1, v2, p2, v3, p3);
+            if (blend && blend.error) {
+                result.innerHTML = '<strong class="nrt-error">Error: ' + blend.error + '</strong>';
+            } else {
+                var vi = nrtVI(blend);
+                result.innerHTML =
+                    '<strong>Blend KV100: ' + blend.toFixed(2) + ' cSt</strong>' +
+                    '<strong>Viscosity Index: ' + vi.toFixed(0) + '</strong>' +
+                    '<span class="nrt-note">Calculated using logarithmic blending rule. ' +
+                    '<a href="https://www.lube-media.com/wp-content/uploads/2017/11/Lube-Tech093-ViscosityBlendingEquations.pdf" target="_blank">Learn more</a></span>';
+            }
+            result.style.display = 'block';
+        }
+        window.nrtCalcVisc = nrtCalcVisc;
+
+        function nrtViscPreset(type) {
+            if (type === 'gear') {
+                document.getElementById('nrt-v1').value = 4.5;
+                document.getElementById('nrt-p1').value = 70;
+                document.getElementById('nrt-v2').value = 8;
+                document.getElementById('nrt-p2').value = 30;
+                document.getElementById('nrt-p3').value = 0;
+            } else if (type === 'vii') {
+                document.getElementById('nrt-p1').value = 49.5;
+                document.getElementById('nrt-p2').value = 50;
+                document.getElementById('nrt-p3').value = 0.5;
+            } else {
+                document.getElementById('nrt-v1').value = 4;
+                document.getElementById('nrt-p1').value = 50;
+                document.getElementById('nrt-v2').value = 6;
+                document.getElementById('nrt-p2').value = 50;
+                document.getElementById('nrt-v3').value = 1500;
+                document.getElementById('nrt-p3').value = 0;
+            }
+            document.getElementById('nrt-visc-result').style.display = 'none';
+        }
+        window.nrtViscPreset = nrtViscPreset;
+
+        // Treat rate calculator
+        var nrtAdditives = {
+            'pma': { label: 'PMA VII Gear', rate: 0.005, cost: 15 },
+            'ep': { label: 'EP Gear Oil', rate: 0.010, cost: 20 },
+            'atf': { label: 'ATF Package', rate: 0.008, cost: 18 }
+        };
+
+        function nrtCalcTreat() {
+            var vol = parseFloat(document.getElementById('nrt-volume').value);
+            var key = document.getElementById('nrt-additive').value;
+            var density = 0.85;
+            var oilMass = vol * density;
+            var add = nrtAdditives[key];
+            var addMass = oilMass * add.rate;
+            var total = addMass * add.cost;
+            var result = document.getElementById('nrt-treat-result');
+            result.innerHTML =
+                '<strong>' + addMass.toFixed(1) + ' kg additive</strong>' +
+                '$' + total.toFixed(0) + ' total cost<br>' +
+                '<span class="nrt-note">' + add.label + ' @ ' + (add.rate * 100) + '% treat rate &mdash; density 0.85 kg/L</span>';
+            result.style.display = 'block';
+        }
+        window.nrtCalcTreat = nrtCalcTreat;
+    })();
+</script>

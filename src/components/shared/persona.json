@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_shared_personas",
+  "info": {
+    "displayName": "Persona",
+    "icon": "user"
+  },
+  "options": {},
+  "attributes": {
+    "title": { "type": "string", "required": true },
+    "description": { "type": "text" },
+    "icon": { "type": "media", "multiple": false, "required": false, "allowedTypes": ["images", "files", "videos"] }
+  }
+}
+

@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "technical_resources",
+  "info": {
+    "singularName": "technical-resource",
+    "pluralName": "technical-resources",
+    "displayName": "Technical Resource"
+  },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": {},
+  "attributes": {
+    "title": { "type": "string", "required": true },
+    "slug": { "type": "uid", "targetField": "title" },
+    "excerpt": { "type": "text" },
+    "body": { "type": "richtext" },
+    "file": { "type": "media", "multiple": false, "required": false, "allowedTypes": ["files", "images"] },
+    "category": { "type": "string" },
+    "seo": { "type": "component", "repeatable": false, "component": "shared.seo" }
+  }
+}
+

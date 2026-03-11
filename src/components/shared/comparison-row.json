@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_shared_comparison_rows",
+  "info": {
+    "displayName": "Comparison Row",
+    "icon": "columns"
+  },
+  "options": {},
+  "attributes": {
+    "factor": { "type": "string", "required": true },
+    "nrtech": { "type": "string", "required": true },
+    "majors": { "type": "string", "required": true }
+  }
+}
+

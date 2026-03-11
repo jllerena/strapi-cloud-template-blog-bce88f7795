@@ -1,0 +1,16 @@
+{
+  "kind": "singleType",
+  "collectionName": "teams",
+  "info": {
+    "singularName": "team",
+    "pluralName": "teams",
+    "displayName": "Team"
+  },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": {},
+  "attributes": {
+    "members": { "type": "component", "repeatable": true, "component": "shared.team-member" },
+    "seo": { "type": "component", "repeatable": false, "component": "shared.seo" }
+  }
+}
+

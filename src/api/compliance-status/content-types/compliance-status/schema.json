@@ -1,0 +1,21 @@
+{
+  "kind": "singleType",
+  "collectionName": "compliance_statuses",
+  "info": {
+    "singularName": "compliance-status",
+    "pluralName": "compliance-statuses",
+    "displayName": "Compliance Status"
+  },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": {},
+  "attributes": {
+    "nsfStatus": { "type": "string" },
+    "nsfProgress": { "type": "integer" },
+    "apiStatus": { "type": "string" },
+    "apiProgress": { "type": "integer" },
+    "isoStatus": { "type": "string" },
+    "isoProgress": { "type": "integer" },
+    "seo": { "type": "component", "repeatable": false, "component": "shared.seo" }
+  }
+}
+

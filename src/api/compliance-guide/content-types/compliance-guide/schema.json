@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "compliance_guides",
+  "info": {
+    "singularName": "compliance-guide",
+    "pluralName": "compliance-guides",
+    "displayName": "Compliance Guide"
+  },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": {},
+  "attributes": {
+    "title": { "type": "string", "required": true },
+    "slug": { "type": "uid", "targetField": "title" },
+    "status": { "type": "string" },
+    "progress": { "type": "integer" },
+    "body": { "type": "richtext" },
+    "downloads": { "type": "media", "multiple": true, "required": false, "allowedTypes": ["files"] },
+    "seo": { "type": "component", "repeatable": false, "component": "shared.seo" }
+  }
+}
+

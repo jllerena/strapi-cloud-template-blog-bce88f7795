@@ -1,0 +1,6 @@
+{
+  "/page": "app/page.js",
+  "/our-team/page": "app/our-team/page.js",
+  "/technical-library/page": "app/technical-library/page.js",
+  "/solutions/page": "app/solutions/page.js"
+}

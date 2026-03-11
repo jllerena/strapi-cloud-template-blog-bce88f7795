@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_shared_lead_magnets",
+  "info": {
+    "displayName": "Lead Magnet",
+    "icon": "download"
+  },
+  "options": {},
+  "attributes": {
+    "title": { "type": "string", "required": true },
+    "description": { "type": "text" },
+    "file": { "type": "media", "multiple": false, "required": false, "allowedTypes": ["files", "images", "videos"] }
+  }
+}
+

@@ -1,0 +1,20 @@
+{
+  "kind": "singleType",
+  "collectionName": "why_nrtechs",
+  "info": {
+    "singularName": "why-nrtech",
+    "pluralName": "why-nrtechs",
+    "displayName": "Why NRTech"
+  },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": {},
+  "attributes": {
+    "hero": { "type": "component", "repeatable": false, "component": "shared.hero" },
+    "problem": { "type": "richtext" },
+    "story": { "type": "text" },
+    "advantages": { "type": "component", "repeatable": true, "component": "shared.feature" },
+    "teamTeaserCta": { "type": "component", "repeatable": false, "component": "shared.cta" },
+    "seo": { "type": "component", "repeatable": false, "component": "shared.seo" }
+  }
+}
+

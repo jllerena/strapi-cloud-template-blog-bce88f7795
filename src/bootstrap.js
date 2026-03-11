@@ -81,6 +81,20 @@ function getFileData(fileName) {
   };
 }
 
+function getFileDataFromPath(relativePath) {
+  const filePath = relativePath;
+  const size = getFileSizeInBytes(filePath);
+  const ext = filePath.split('.').pop();
+  const mimeType = mime.lookup(ext || '') || '';
+  const originalFileName = path.basename(filePath);
+  return {
+    filepath: filePath,
+    originalFileName,
+    size,
+    mimetype: mimeType,
+  };
+}
+
 async function uploadFile(file, name) {
   return strapi
     .plugin('upload')
@@ -269,6 +283,197 @@ async function main() {
 }
 
 
+async function ensureMarketingPermissions() {
+  await setPublicPermissions({
+    'homepage': ['find'],
+    'why-nrtech': ['find'],
+    'solution': ['find', 'findOne'],
+    'case-study': ['find', 'findOne'],
+    'technical-resource': ['find', 'findOne'],
+    'compliance-guide': ['find', 'findOne'],
+    'compliance-status': ['find'],
+    'team': ['find']
+  });
+}
+
+async function ensureOfficialAssets() {
+  try {
+    const dir = path.join('data', 'uploads', 'official');
+    if (!fs.existsSync(dir)) return;
+    const files = fs.readdirSync(dir).filter((f) => !f.startsWith('.'));
+    for (const f of files) {
+      const nameNoExt = f.replace(/\..*$/, '');
+      const existing = await strapi.query('plugin::upload.file').findOne({
+        where: { name: nameNoExt },
+      });
+      if (existing) continue;
+      const fileData = getFileDataFromPath(path.join('data', 'uploads', 'official', f));
+      const displayName = nameNoExt;
+      try {
+        await uploadFile(fileData, displayName);
+      } catch (e) {
+        // noop
+      }
+    }
+  } catch (e) {
+    // noop
+  }
+}
+
 module.exports = async () => {
+  try {
+    await ensureMarketingPermissions();
+  } catch (e) {}
+  try {
+    await ensureOfficialAssets();
+  } catch (e) {}
+  try {
+    await ensureHeadshotsAssets();
+  } catch (e) {}
   await seedExampleApp();
+  try {
+    await seedSolutions();
+  } catch (e) {}
+  try {
+    await seedComplianceStatus();
+  } catch (e) {}
+  try {
+    await seedTeam();
+  } catch (e) {}
 };
+
+async function ensureHeroImages() {
+  try {
+    const fileByBase = async (base) =>
+      await strapi.query('plugin::upload.file').findOne({ where: { name: base } });
+
+    const assignHeroImage = async (uid, baseName) => {
+      const file = await fileByBase(baseName.replace(/\..*$/, ''));
+      if (!file) return;
+      const existing = await strapi.entityService.findMany(uid, { fields: ['id'], populate: { hero: true } });
+      const doc = Array.isArray(existing) ? existing[0] : existing;
+      if (doc?.id) {
+        await strapi.entityService.update(uid, doc.id, {
+          data: {
+            hero: {
+              ...(doc.hero || {}),
+              image: file.id,
+            },
+          },
+        });
+      } else {
+        await strapi.entityService.create(uid, {
+          data: {
+            hero: { image: file.id },
+          },
+        });
+      }
+    };
+
+    await assignHeroImage('api::homepage.homepage', 'Slide-1_opt.jpg');
+    await assignHeroImage('api::why-nrtech.why-nrtech', 'Equipment_1-1.jpg');
+  } catch (e) {
+  }
+}
+
+async function ensureHeadshotsAssets() {
+  try {
+    const dir = path.join('public', 'uploads', 'headshots');
+    if (!fs.existsSync(dir)) return;
+    const files = fs.readdirSync(dir).filter((f) => !f.startsWith('.'));
+    for (const f of files) {
+      const nameNoExt = f.replace(/\..*$/, '');
+      const existing = await strapi.query('plugin::upload.file').findOne({
+        where: { name: nameNoExt },
+      });
+      if (existing) continue;
+      const fileData = getFileDataFromPath(path.join('public', 'uploads', 'headshots', f));
+      const displayName = nameNoExt;
+      try {
+        await uploadFile(fileData, displayName);
+      } catch {}
+    }
+  } catch {}
+}
+async function seedSolutions() {
+  const existing = await strapi.documents('api::solution.solution').findMany({ limit: 1 });
+  if (Array.isArray(existing) && existing.length > 0) return;
+  const items = [
+    {
+      title: 'Regional Blenders',
+      slug: 'regional-blenders',
+      hero: { title: 'Regional Blenders', subtitle: 'Flexible MOQs and technical partnership.', primaryCtaLabel: 'Schedule Scoping', primaryCtaUrl: '/schedule' },
+      summary: '<p>Flexible MOQs starting at 10,000 gallons and tailored solutions.</p>',
+      benefits: [
+        { title: 'Flexible MOQs', description: 'Start at realistic volumes.' },
+        { title: 'Custom Formulations', description: '4–6 week guarantee.' }
+      ],
+      primaryCta: { title: 'Start your project', description: '', ctaLabel: 'Schedule Scoping', ctaUrl: '/schedule' }
+    },
+    {
+      title: 'Bio‑Based Additives',
+      slug: 'bio-based-additives',
+      hero: { title: 'Bio‑Based Additives', subtitle: 'NSF/Ecolabel aligned portfolio.', primaryCtaLabel: 'Request Assessment', primaryCtaUrl: '/schedule' },
+      summary: '<p>Compliance-ready bio‑based solutions with high performance.</p>',
+      benefits: [
+        { title: 'Compliance Alignment', description: 'NSF, LuSC paths.' },
+        { title: 'High Performance', description: 'Without trade‑offs.' }
+      ],
+      primaryCta: { title: 'Assess compliance', description: '', ctaLabel: 'Request Assessment', ctaUrl: '/schedule' }
+    },
+    {
+      title: 'Custom Formulation',
+      slug: 'custom-formulation',
+      hero: { title: 'Custom Formulation', subtitle: 'Your toughest challenges deserve custom solutions.', primaryCtaLabel: 'Start Scoping', primaryCtaUrl: '/schedule' },
+      summary: '<p>Scoping → Lab → Testing → Pilot → Scale‑up.</p>',
+      benefits: [
+        { title: 'Rapid Development', description: 'Lab in 2–3 weeks.' },
+        { title: 'Pilot & Scale', description: 'From 20kg to production.' }
+      ],
+      primaryCta: { title: 'Start scoping', description: '', ctaLabel: 'Start Scoping', ctaUrl: '/schedule' }
+    },
+    {
+      title: 'Aftermarket & Private Label',
+      slug: 'aftermarket-private-label',
+      hero: { title: 'Aftermarket & Private Label', subtitle: 'Contract manufacturing and co‑branding options.', primaryCtaLabel: 'Discuss Opportunity', primaryCtaUrl: '/schedule' },
+      summary: '<p>GDI detergents, winterizers, fuel system cleaners.</p>',
+      benefits: [
+        { title: 'Contract Manufacturing', description: 'For aftermarket brands.' },
+        { title: 'Custom Packages', description: 'GDI, cold flow improvers.' }
+      ],
+      primaryCta: { title: 'Discuss opportunity', description: '', ctaLabel: 'Discuss Opportunity', ctaUrl: '/schedule' }
+    }
+  ];
+  for (const s of items) {
+    try {
+      await strapi.documents('api::solution.solution').create({ data: { ...s, publishedAt: Date.now() } });
+    } catch {}
+  }
+}
+
+async function seedComplianceStatus() {
+  try {
+    const existing = await strapi.documents('api::compliance-status.compliance-status').findMany({ limit: 1 });
+    if (Array.isArray(existing) && existing.length > 0) return;
+    await strapi.documents('api::compliance-status.compliance-status').create({ data: { nsfStatus: 'In Progress — ETA Q2 2026', nsfProgress: 65, apiStatus: 'In Progress — ETA Q4 2026', apiProgress: 40, isoStatus: 'Planned — ETA Q3 2026', isoProgress: 0, publishedAt: Date.now() } });
+  } catch {}
+}
+
+async function seedTeam() {
+  try {
+    const existing = await strapi.documents('api::team.team').findMany({ limit: 1 });
+    if (Array.isArray(existing) && existing.length > 0) return;
+    const headshotNames = ['Headshot1', 'Screenshot 2024-09-06 at 8.10.31 p.m.', 'Screenshot 2024-09-06 at 8.11.04 p.m.'];
+    const photos = [];
+    for (const base of headshotNames) {
+      const file = await strapi.query('plugin::upload.file').findOne({ where: { name: base } });
+      if (file) photos.push(file.id);
+    }
+    const m = [
+      { name: 'Chief Technical Officer', title: 'CTO', bio: 'PhD Chemistry, 20+ years.', photo: photos[0] || null },
+      { name: 'Senior Formulation Chemist', title: 'R&D', bio: 'NSF, Ecolabel expertise.', photo: photos[1] || null },
+      { name: 'Quality Control Director', title: 'QC', bio: 'Rigorous testing and data transparency.', photo: photos[2] || null },
+    ];
+    await strapi.documents('api::team.team').create({ data: { members: m, publishedAt: Date.now() } });
+  } catch {}
+}
